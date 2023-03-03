@@ -3,8 +3,6 @@
 #include <bits/stdc++.h>
 #include <vector>
 
-// ToDo Check edge cases everywehre.
-//  reduce box func.
 using namespace std;
 const double PI = 3.14159265358979323846;
 
@@ -69,65 +67,68 @@ void box(vector<vector<double>> &L, double notch_x, double notch_y)
 
 ofstream fw("output.txt", std::ofstream::out);
 
-
-// Define a point struct to store (x, y) coordinates
-struct Point {
-    double x;
-    double y;
+struct Point
+{
+  double x;
+  double y;
 };
 
 // Function to generate a random polygon with the specified number of points and distance range
-std::vector<Point> generatePolygon(int pointAmount, double minDistance, double maxDistance) {
-    std::vector<Point> polygon;
+std::vector<Point> generatePolygon(int pointAmount, double minDistance, double maxDistance)
+{
+  std::vector<Point> polygon;
 
-    // Use a random number generator to generate random distances and angles
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_real_distribution<double> dist(minDistance, maxDistance);
-    std::uniform_real_distribution<double> angle(0, 2 * M_PI);
+  // Use a random number generator to generate random distances and angles
+  std::random_device rd;
+  std::mt19937 gen(rd());
+  std::uniform_real_distribution<double> dist(minDistance, maxDistance);
+  std::uniform_real_distribution<double> angle(0, 2 * M_PI);
 
-    // Calculate the (x, y) coordinates for each point on the polygon
-    for (int i = 0; i < pointAmount; i++) {
-        Point point;
+  // Calculate the (x, y) coordinates for each point on the polygon
+  for (int i = 0; i < pointAmount; i++)
+  {
+    Point point;
 
-        double degrees = (360.0 / pointAmount) * (i + 1);
-        double distance = dist(gen);
-        double radians = degrees * M_PI / 180.0;
+    double degrees = (360.0 / pointAmount) * (i + 1);
+    double distance = dist(gen);
+    double radians = degrees * M_PI / 180.0;
 
-        point.x = (cos(radians) * distance) + 160.0;
-        point.y = (sin(radians) * distance) + 160.0;
+    point.x = (cos(radians) * distance) + 160.0;
+    point.y = (sin(radians) * distance) + 160.0;
 
-        polygon.push_back(point);
-    }
+    polygon.push_back(point);
+  }
 
-    // Calculate the centroid of the polygon
-    Point centroid = {0, 0};
-    for (const Point& point : polygon) {
-        centroid.x += point.x;
-        centroid.y += point.y;
-    }
-    centroid.x /= polygon.size();
-    centroid.y /= polygon.size();
+  // Calculate the centroid of the polygon
+  Point centroid = {0, 0};
+  for (const Point &point : polygon)
+  {
+    centroid.x += point.x;
+    centroid.y += point.y;
+  }
+  centroid.x /= polygon.size();
+  centroid.y /= polygon.size();
 
-    // Sort the points in clockwise order relative to the centroid
-    std::sort(polygon.begin(), polygon.end(), [&centroid](const Point& a, const Point& b) {
+  // Sort the points in clockwise order relative to the centroid
+  std::sort(polygon.begin(), polygon.end(), [&centroid](const Point &a, const Point &b)
+            {
         double angleA = atan2(a.y - centroid.y, a.x - centroid.x);
         double angleB = atan2(b.y - centroid.y, b.x - centroid.x);
-        return angleA < angleB;
-    });
+        return angleA < angleB; });
 
-    return polygon;
+  return polygon;
 }
 
 int main()
 {
-   std::vector<Point> polygon = generatePolygon(12, 5, 15.0);
+  std::vector<Point> polygon = generatePolygon(12, 5, 15.0);
 
   vector<vector<double>> P;
-  for (const Point& point : polygon) {
-    P.push_back({point.x,point.y});
-        // std::cout << "(" << point.x << ", " << point.y << ")" << std::endl;
-    }
+  for (const Point &point : polygon)
+  {
+    P.push_back({point.x, point.y});
+    // std::cout << "(" << point.x << ", " << point.y << ")" << std::endl;
+  }
 
   // vector<vector<double>> P{
   //     {6, 2}, //1
@@ -149,10 +150,11 @@ int main()
   //     {9.48, 3.86},//17
   //     {6,2}
   //     };
-      for(auto i:P){
-        fw<<i[0]<<","<<i[1]<<endl;
-      }
-      fw<<"end"<<endl;
+  for (auto i : P)
+  {
+    fw << i[0] << "," << i[1] << endl;
+  }
+  fw << "end" << endl;
   vector<vector<double>> L;
   vector<vector<double>> LPVS;
   vector<vector<vector<double>>> polygons;
@@ -163,7 +165,8 @@ int main()
   double v_next[2];
   bool flag = 1;
   bool LPVSflag = 1;
-  for (int i = 0; i < P.size() - 1;){
+  for (int i = 0; i < P.size() - 1;)
+  {
     /* code */
 
     v_1[0] = P[i][0];
@@ -175,7 +178,8 @@ int main()
     L.push_back(P[i]);
     L.push_back(P[i + 1]);
 
-    for (int j = i +1; j < P.size() - 1; j++){
+    for (int j = i + 1; j < P.size() - 1; j++)
+    {
       v_prev[0] = P[j - 1][0];
       v_prev[1] = P[j - 1][1];
 
@@ -187,49 +191,54 @@ int main()
 
       if ((angle_check(v_prev[0], v_prev[1], v_i[0], v_i[1], v_next[0], v_next[1])) &&
           (angle_check(v_i[0], v_i[1], v_next[0], v_next[1], v_1[0], v_1[1]) &&
-           angle_check(v_next[0], v_next[1], v_1[0], v_1[1], v_2[0], v_2[1]))){
-        if (flag && LPVSflag){
+           angle_check(v_next[0], v_next[1], v_1[0], v_1[1], v_2[0], v_2[1])))
+      {
+        if (flag && LPVSflag)
+        {
           L.push_back({v_next[0], v_next[1]});
         }
       }
-      else{
+      else
+      {
         LPVS.push_back({v_next[0], v_next[1]});
-        LPVSflag=0;
-        if (L.size() == 2){
+        LPVSflag = 0;
+        if (L.size() == 2)
+        {
           flag = 0;
         }
       }
     }
 
-    if (flag){
-      for (int k = 0; k < LPVS.size(); k++){
+    if (flag)
+    {
+      for (int k = 0; k < LPVS.size(); k++)
+      {
         box(L, LPVS[k][0], LPVS[k][1]);
       }
       polygons.push_back(L);
     }
 
-    i = i + L.size()-1;
+    i = i + L.size() - 1;
     L.clear();
-
 
     // for(auto i:LPVS){
     //   cout<<i[0]<<","<<i[1]<<endl;
     // }
     // cout << "end" << endl;
 
-
-
     LPVS.clear();
     flag = 1;
     LPVSflag = 1;
   }
 
-  for (auto i : polygons){
-    for (auto j : i){
+  for (auto i : polygons)
+  {
+    for (auto j : i)
+    {
       fw << j[0] << "," << j[1] << endl;
       std::cout << j[0] << "," << j[1] << std::endl;
     }
-     fw << "end" << endl;
+    fw << "end" << endl;
     cout << "end" << endl;
   }
   return 0;

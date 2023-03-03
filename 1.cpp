@@ -69,23 +69,25 @@ void box(vector<vector<double>> &L, double notch_x, double notch_y)
 int main()
 {
   vector<vector<double>> P{
-      {6, 2},
-      {4.5, 2.52},
-      {3.66, 4.54},
-      {4.66, 6.46},
-      {6.62, 7.4},
-      {9.2, 7.66},
-      {10.18, 6.86},
-      {9.34, 6.5},
-      {8.98, 5.74},
-      {7.04, 5.42},
-      {8.54, 4.44},
-      {11.4, 5.86},
-      {13.64, 5.46},
-      {14.3, 3.72},
-      {13.6, 2.86},
-      {11.8, 2.86},
-      {10.48, 3.86}};
+      {6, 2}, //1
+      {4.5, 2.52}, //2
+      {3.66, 4.54}, //3
+      {4.66, 6.46}, //4
+      {6.62, 7.4},  //5
+      {9.2, 7.66},  //6
+      {10.18, 6.86}, //7
+      {9.34, 6.5},  //8
+      {8.98, 5.74},  //9
+      {7.04, 5.42},  //10
+      {8.54, 4.44},  //11
+      {11.4, 5.86},  //12
+      {13.64, 5.46},  //13
+      {14.3, 3.72},  //14
+      {13.6, 2.86},  //15
+      {11.8, 2.86},  //16
+      {9.48, 3.86},//17
+      {6,2}
+      };
 
   vector<vector<double>> L;
   vector<vector<double>> LPVS;
@@ -96,9 +98,8 @@ int main()
   double v_i[2];
   double v_next[2];
   bool flag = 1;
-
-  for (int i = 0; i < P.size() - 1;)
-  {
+  bool LPVSflag = 1;
+  for (int i = 0; i < P.size() - 1;){
     /* code */
 
     v_1[0] = P[i][0];
@@ -110,8 +111,7 @@ int main()
     L.push_back(P[i]);
     L.push_back(P[i + 1]);
 
-    for (int j = i + 1; j < P.size() - 2; j++)
-    {
+    for (int j = i + 1; j < P.size() - 1; j++){
       v_prev[0] = P[j - 1][0];
       v_prev[1] = P[j - 1][1];
 
@@ -123,45 +123,45 @@ int main()
 
       if ((angle_check(v_prev[0], v_prev[1], v_i[0], v_i[1], v_next[0], v_next[1])) &&
           (angle_check(v_i[0], v_i[1], v_next[0], v_next[1], v_1[0], v_1[1]) &&
-           angle_check(v_next[0], v_next[1], v_1[0], v_1[1], v_2[0], v_2[1])))
-      {
-        if (flag)
-        {
+           angle_check(v_next[0], v_next[1], v_1[0], v_1[1], v_2[0], v_2[1]))){
+        if (flag && LPVSflag){
           L.push_back({v_next[0], v_next[1]});
         }
       }
-      else
-      {
+      else{
         LPVS.push_back({v_next[0], v_next[1]});
-        if (L.size() == 2)
-        {
+        LPVSflag=0;
+        if (L.size() == 2){
           flag = 0;
         }
       }
     }
 
-    if (flag)
-    {
-      for (int k = 0; k < LPVS.size(); k++)
-      {
+    if (flag){
+      for (int k = 0; k < LPVS.size(); k++){
         box(L, LPVS[k][0], LPVS[k][1]);
       }
       polygons.push_back(L);
-      // flag =1;
     }
+
+    i = i + L.size();
+    L.clear();
+
+
     // for(auto i:LPVS){
     //   cout<<i[0]<<","<<i[1]<<endl;
     // }
-    // cout<<"end"<<endl;
-    i = i + L.size();
-    L.clear();
+    // cout << "end" << endl;
+
+
+
+    LPVS.clear();
     flag = 1;
+    LPVSflag = 1;
   }
 
-  for (auto i : polygons)
-  {
-    for (auto j : i)
-    {
+  for (auto i : polygons){
+    for (auto j : i){
       std::cout << j[0] << "," << j[1] << std::endl;
     }
     cout << "end" << endl;

@@ -6,6 +6,7 @@
 // ToDo Check edge cases everywehre.
 //  reduce box func.
 using namespace std;
+const double PI = 3.14159265358979323846;
 
 bool angle_check(double x1, double y1, double x2, double y2, double x3, double y3)
 {
@@ -16,7 +17,7 @@ bool angle_check(double x1, double y1, double x2, double y2, double x3, double y
   double v2 = y3 - y2;
   double z = (u1 * v2) - (u2 * v1);
 
-  if (z <= 0)
+  if (z >= 0)
   {
     return true;
   }
@@ -66,29 +67,92 @@ void box(vector<vector<double>> &L, double notch_x, double notch_y)
   return;
 }
 
+ofstream fw("output.txt", std::ofstream::out);
+
+
+// Define a point struct to store (x, y) coordinates
+struct Point {
+    double x;
+    double y;
+};
+
+// Function to generate a random polygon with the specified number of points and distance range
+std::vector<Point> generatePolygon(int pointAmount, double minDistance, double maxDistance) {
+    std::vector<Point> polygon;
+
+    // Use a random number generator to generate random distances and angles
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<double> dist(minDistance, maxDistance);
+    std::uniform_real_distribution<double> angle(0, 2 * M_PI);
+
+    // Calculate the (x, y) coordinates for each point on the polygon
+    for (int i = 0; i < pointAmount; i++) {
+        Point point;
+
+        double degrees = (360.0 / pointAmount) * (i + 1);
+        double distance = dist(gen);
+        double radians = degrees * M_PI / 180.0;
+
+        point.x = (cos(radians) * distance) + 160.0;
+        point.y = (sin(radians) * distance) + 160.0;
+
+        polygon.push_back(point);
+    }
+
+    // Calculate the centroid of the polygon
+    Point centroid = {0, 0};
+    for (const Point& point : polygon) {
+        centroid.x += point.x;
+        centroid.y += point.y;
+    }
+    centroid.x /= polygon.size();
+    centroid.y /= polygon.size();
+
+    // Sort the points in clockwise order relative to the centroid
+    std::sort(polygon.begin(), polygon.end(), [&centroid](const Point& a, const Point& b) {
+        double angleA = atan2(a.y - centroid.y, a.x - centroid.x);
+        double angleB = atan2(b.y - centroid.y, b.x - centroid.x);
+        return angleA < angleB;
+    });
+
+    return polygon;
+}
+
 int main()
 {
-  vector<vector<double>> P{
-      {6, 2}, //1
-      {4.5, 2.52}, //2
-      {3.66, 4.54}, //3
-      {4.66, 6.46}, //4
-      {6.62, 7.4},  //5
-      {9.2, 7.66},  //6
-      {10.18, 6.86}, //7
-      {9.34, 6.5},  //8
-      {8.98, 5.74},  //9
-      {7.04, 5.42},  //10
-      {8.54, 4.44},  //11
-      {11.4, 5.86},  //12
-      {13.64, 5.46},  //13
-      {14.3, 3.72},  //14
-      {13.6, 2.86},  //15
-      {11.8, 2.86},  //16
-      {9.48, 3.86},//17
-      {6,2}
-      };
+   std::vector<Point> polygon = generatePolygon(12, 5, 15.0);
 
+  vector<vector<double>> P;
+  for (const Point& point : polygon) {
+    P.push_back({point.x,point.y});
+        // std::cout << "(" << point.x << ", " << point.y << ")" << std::endl;
+    }
+
+  // vector<vector<double>> P{
+  //     {6, 2}, //1
+  //     {4.5, 2.52}, //2
+  //     {3.66, 4.54}, //3
+  //     {4.66, 6.46}, //4
+  //     {6.62, 7.4},  //5
+  //     {9.2, 7.66},  //6
+  //     {10.18, 6.86}, //7
+  //     {9.34, 6.5},  //8
+  //     {8.98, 5.74},  //9
+  //     {7.04, 5.42},  //10
+  //     {8.54, 4.44},  //11
+  //     {11.4, 5.86},  //12
+  //     {13.64, 5.46},  //13
+  //     {14.3, 3.72},  //14
+  //     {13.6, 2.86},  //15
+  //     {11.8, 2.86},  //16
+  //     {9.48, 3.86},//17
+  //     {6,2}
+  //     };
+      for(auto i:P){
+        fw<<i[0]<<","<<i[1]<<endl;
+      }
+      fw<<"end"<<endl;
   vector<vector<double>> L;
   vector<vector<double>> LPVS;
   vector<vector<vector<double>>> polygons;
@@ -111,7 +175,7 @@ int main()
     L.push_back(P[i]);
     L.push_back(P[i + 1]);
 
-    for (int j = i + 1; j < P.size() - 1; j++){
+    for (int j = i +1; j < P.size() - 1; j++){
       v_prev[0] = P[j - 1][0];
       v_prev[1] = P[j - 1][1];
 
@@ -144,7 +208,7 @@ int main()
       polygons.push_back(L);
     }
 
-    i = i + L.size();
+    i = i + L.size()-1;
     L.clear();
 
 
@@ -162,8 +226,10 @@ int main()
 
   for (auto i : polygons){
     for (auto j : i){
+      fw << j[0] << "," << j[1] << endl;
       std::cout << j[0] << "," << j[1] << std::endl;
     }
+     fw << "end" << endl;
     cout << "end" << endl;
   }
   return 0;

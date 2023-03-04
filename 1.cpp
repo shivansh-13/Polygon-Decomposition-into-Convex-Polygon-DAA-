@@ -121,7 +121,7 @@ std::vector<Point> generatePolygon(int pointAmount, double minDistance, double m
 
 int main()
 {
-  std::vector<Point> polygon = generatePolygon(12, 5, 15.0);
+  std::vector<Point> polygon = generatePolygon(13, 10, 20.0);
 
   vector<vector<double>> P;
   for (const Point &point : polygon)
@@ -129,6 +129,7 @@ int main()
     P.push_back({point.x, point.y});
     // std::cout << "(" << point.x << ", " << point.y << ")" << std::endl;
   }
+  P.push_back(P[0]);
 
   // vector<vector<double>> P{
   //     {6, 2}, //1
@@ -150,11 +151,11 @@ int main()
   //     {9.48, 3.86},//17
   //     {6,2}
   //     };
-  for (auto i : P)
-  {
-    fw << i[0] << "," << i[1] << endl;
-  }
-  fw << "end" << endl;
+  // for (auto i : P)
+  // {
+  //   fw << i[0] << "," << i[1] << endl;
+  // }
+  // fw << "end" << endl;
   vector<vector<double>> L;
   vector<vector<double>> LPVS;
   vector<vector<vector<double>>> polygons;
@@ -205,6 +206,7 @@ int main()
         if (L.size() == 2)
         {
           flag = 0;
+          
         }
       }
     }
@@ -216,17 +218,24 @@ int main()
         box(L, LPVS[k][0], LPVS[k][1]);
       }
       polygons.push_back(L);
+      // P.push_back({L[0],L[L.size()-1]});
+      // P.push_back(L[0]);
+      if(L[0]!=L[L.size()-1]){
+      P.push_back(L[L.size()-1]);}
     }
+    else if(L[0]!=L[L.size()-1])
+    {P.push_back(L[1]);}
+    
 
-    i = i + L.size() - 1;
-    L.clear();
-
-    // for(auto i:LPVS){
-    //   cout<<i[0]<<","<<i[1]<<endl;
+    // for(auto i:L){
+    //   fw<<i[0]<<","<<i[1]<<endl;
     // }
+    // fw<< "end" << endl;
     // cout << "end" << endl;
 
-    LPVS.clear();
+
+i = i + L.size() - 1;
+    L.clear();    LPVS.clear();
     flag = 1;
     LPVSflag = 1;
   }
@@ -236,10 +245,10 @@ int main()
     for (auto j : i)
     {
       fw << j[0] << "," << j[1] << endl;
-      std::cout << j[0] << "," << j[1] << std::endl;
+      //std::cout << j[0] << "," << j[1] << std::endl;
     }
     fw << "end" << endl;
-    cout << "end" << endl;
+    //cout << "end" << endl;
   }
   return 0;
 }

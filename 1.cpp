@@ -66,7 +66,7 @@ void box(vector<vector<double>> &L, double notch_x, double notch_y)
 }
 
 ofstream fw("output.txt", std::ofstream::out);
-
+ofstream fw2("output2.txt", std::ofstream::out);
 struct Point
 {
   double x;
@@ -121,7 +121,7 @@ std::vector<Point> generatePolygon(int pointAmount, double minDistance, double m
 
 int main()
 {
-  std::vector<Point> polygon = generatePolygon(13, 10, 20.0);
+  std::vector<Point> polygon = generatePolygon(17, 20.0, 30.0);
 
   vector<vector<double>> P;
   for (const Point &point : polygon)
@@ -132,33 +132,34 @@ int main()
   P.push_back(P[0]);
 
   // vector<vector<double>> P{
-  //     {6, 2}, //1
-  //     {4.5, 2.52}, //2
-  //     {3.66, 4.54}, //3
-  //     {4.66, 6.46}, //4
-  //     {6.62, 7.4},  //5
-  //     {9.2, 7.66},  //6
-  //     {10.18, 6.86}, //7
-  //     {9.34, 6.5},  //8
-  //     {8.98, 5.74},  //9
-  //     {7.04, 5.42},  //10
-  //     {8.54, 4.44},  //11
-  //     {11.4, 5.86},  //12
-  //     {13.64, 5.46},  //13
-  //     {14.3, 3.72},  //14
-  //     {13.6, 2.86},  //15
-  //     {11.8, 2.86},  //16
-  //     {9.48, 3.86},//17
-  //     {6,2}
-  //     };
-  // for (auto i : P)
-  // {
-  //   fw << i[0] << "," << i[1] << endl;
-  // }
-  // fw << "end" << endl;
+  //     {6, 2},        // 1
+  //     {4.5, 2.52},   // 2
+  //     {3.66, 4.54},  // 3
+  //     {4.66, 6.46},  // 4
+  //     {6.62, 7.4},   // 5
+  //     {9.2, 7.66},   // 6
+  //     {10.18, 6.86}, // 7
+  //     {9.34, 6.5},   // 8
+  //     {8.98, 5.74},  // 9
+  //     {7.04, 5.42},  // 10
+  //     {8.54, 4.44},  // 11
+  //     {11.4, 5.86},  // 12
+  //     {13.64, 5.46}, // 13
+  //     {14.3, 3.72},  // 14
+  //     {13.6, 2.86},  // 15
+  //     {11.8, 2.86},  // 16
+  //     {9.48, 3.86},  // 17
+  //     {6, 2}};
+  for (auto i : P)
+  {
+    fw2 << i[0] << "," << i[1] << endl;
+  }
+  fw2 << "end" << endl;
   vector<vector<double>> L;
   vector<vector<double>> LPVS;
+  vector<vector<double>> LLE;
   vector<vector<vector<double>>> polygons;
+  vector<vector<vector<vector<double>>>> LPVi;
   double v_1[2];
   double v_2[2];
   double v_prev[2];
@@ -166,6 +167,7 @@ int main()
   double v_next[2];
   bool flag = 1;
   bool LPVSflag = 1;
+
   for (int i = 0; i < P.size() - 1;)
   {
     /* code */
@@ -206,8 +208,9 @@ int main()
         if (L.size() == 2)
         {
           flag = 0;
-          
         }
+        // Flag checks if only two vertices are thre i.e. one edge then dont push in L
+        //  LPVSflag checks if first vertex is notch then push nothing in L
       }
     }
 
@@ -218,37 +221,128 @@ int main()
         box(L, LPVS[k][0], LPVS[k][1]);
       }
       polygons.push_back(L);
+      if (L.size() != 2)
+      {
+        LLE.push_back({L[0][0], L[0][1], L[L.size() - 1][0], L[L.size() - 1][1]});
+      }
       // P.push_back({L[0],L[L.size()-1]});
       // P.push_back(L[0]);
-      if(L[0]!=L[L.size()-1]){
-      P.push_back(L[L.size()-1]);}
+      if (L[0] != L[L.size() - 1])
+      {
+        P.push_back(L[L.size() - 1]);
+      }
     }
-    else if(L[0]!=L[L.size()-1])
-    {P.push_back(L[1]);}
-    
+    else if (L[0] != L[L.size() - 1])
+    {
+      P.push_back(L[1]);
+      polygons.push_back(L);
+    }
 
-    // for(auto i:L){
-    //   fw<<i[0]<<","<<i[1]<<endl;
-    // }
-    // fw<< "end" << endl;
-    // cout << "end" << endl;
+    for (auto i : L)
+    {
+      fw << i[0] << "," << i[1] << endl;
+    }
+    fw << "end" << endl;
+    cout << "end" << endl;
+    i = i + L.size() - 1;
 
-
-i = i + L.size() - 1;
-    L.clear();    LPVS.clear();
+    L.clear();
+    LPVS.clear();
     flag = 1;
     LPVSflag = 1;
   }
 
-  for (auto i : polygons)
-  {
-    for (auto j : i)
-    {
-      fw << j[0] << "," << j[1] << endl;
-      //std::cout << j[0] << "," << j[1] << std::endl;
+  LLE.pop_back();
+  // We have correct LLE at this point
+  polygons[polygons.size() - 1].pop_back();
+
+  int dfjdhfj = 0;
+  vector<vector<double>> aleft1, aright1, aleft2, aright2;
+
+  for (int k = 0; k < LLE.size(); k++)
+  { // This is looping for all vertex in all diagonal list.
+    for (int i = 0; i < polygons.size(); i++)
+    { // This will find a particular edge (i.e 2 vertices ) in the two polygons
+      for (int j = 0; j < polygons[i].size(); j++)
+      { // this will look for second vertex in a particular polygon
+        if (LLE[k][0] == polygons[i][j][0] && LLE[k][1] == polygons[i][j][1])
+        { // this if checks, if a vertexx in a diagonal is there in this iteration of polygon
+          if (LLE[k][2] == polygons[i][(j + 1) % polygons[i].size()][0] && LLE[k][3] == polygons[i][(j + 1) % polygons[i].size()][1])
+          {
+            // this check for second vertex of the diagonal
+            dfjdhfj++;
+            aleft1.push_back({polygons[i][(j - 1) % polygons[i].size()][0],
+                              polygons[i][(j - 1) % polygons[i].size()][1]});
+            aright1.push_back({polygons[i][(j + 2) % polygons[i].size()][0],
+                               polygons[i][(j + 2) % polygons[i].size()][1]});
+          }
+        }
+      }
+      // We cheked for first A then B now we chek for first b then A
+      for (int j = 0; j < polygons[i].size(); j++)
+      { // this will look for second vertex in a particular polygon
+        if (LLE[k][2] == polygons[i][j][0] && LLE[k][3] == polygons[i][j][1])
+        { // this if checks, if a vertexx in a diagonal is there in this iteration of polygon
+          if (LLE[k][0] == polygons[i][(j + 1) % polygons[i].size()][0] && LLE[k][1] == polygons[i][(j + 1) % polygons[i].size()][1])
+          {
+            // this check for second vertex of the diagonal
+            dfjdhfj++;
+            aleft2.push_back({polygons[i][(j - 1) % polygons[i].size()][0],
+                              polygons[i][(j - 1) % polygons[i].size()][1]});
+            aright2.push_back({polygons[i][(j + 2) % polygons[i].size()][0],
+                               polygons[i][(j + 2) % polygons[i].size()][1]});
+          }
+        }
+      }
+    
     }
-    fw << "end" << endl;
-    //cout << "end" << endl;
+
+
+
+
+    if (dfjdhfj == 2)
+      {
+
+        if (angle_check(aleft1[0][0], aleft1[0][1], LLE[k][0], LLE[k][1], aright2[0][0], aright2[0][1]) &&
+            angle_check(aleft2[0][0], aleft2[0][1], LLE[k][2], LLE[k][3], aright1[0][0], aright1[0][1]))
+        {
+          cout << aleft1[0][0];
+          cout << aleft1[0][1] << endl;
+          cout << LLE[k][0];
+          cout << LLE[k][1] << endl;
+          cout << aright2[0][0];
+          cout << aright2[0][1] << endl;
+          cout << endl;
+          cout << aleft2[0][0];
+          cout << aleft2[0][1] << endl;
+          cout << LLE[k][2];
+          cout << LLE[k][3] << endl;
+          cout << aright1[0][0];
+          cout << aright1[0][1] << endl;
+          cout << "mergeeeeeeee" << endl;
+        }
+      }
+
+
+
+
+
+
+    aleft1.clear();
+    aleft2.clear();
+    aright1.clear();
+    aright2.clear();
+    dfjdhfj = 0;
   }
+  // for (auto i : LLE)
+  // {
+
+  //   cout << "{" << i[0] << "," << i[1] << "}"
+  //        << ","
+  //        << "{" << i[2] << "," << i[3] << "}" << endl;
+  //   // std::cout << j[0] << "," << j[1] << std::endl;
+
+  //   // cout << "end" << endl;
+  // }
   return 0;
 }

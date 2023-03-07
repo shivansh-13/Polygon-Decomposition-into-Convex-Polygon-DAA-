@@ -18,7 +18,7 @@ with open('output.txt', 'r') as f:
         polygons.append(current_polygon)
 
 # Plot each polygon using matplotlib
-plt.subplot(1,3,1)
+plt.subplot(3,1,2)
 for polygon in polygons:
     x, y = zip(*polygon)  # unzip the list of tuples into separate x and y lists
     plt.plot(x, y)
@@ -42,7 +42,7 @@ with open('output2.txt', 'r') as f:
         polygons.append(current_polygon)
 
 # Plot each polygon using matplotlib
-plt.subplot(1,3,2)
+plt.subplot(3,1,1)
 for polygon in polygons:
     x, y = zip(*polygon)  # unzip the list of tuples into separate x and y lists
     plt.plot(x, y,marker =".")
@@ -65,7 +65,7 @@ with open('output3.txt', 'r') as f:
         polygons.append(current_polygon)
 
 # Plot each polygon using matplotlib
-plt.subplot(1,3,3)
+plt.subplot(3,1,3)
 for polygon in polygons:
     x, y = zip(*polygon)  # unzip the list of tuples into separate x and y lists
     plt.plot(x, y)

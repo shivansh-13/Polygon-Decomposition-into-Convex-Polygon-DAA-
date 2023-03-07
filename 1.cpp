@@ -222,7 +222,8 @@ int main()
       {
         box(L, LPVS[k][0], LPVS[k][1]);
       }
-      if(L.size()!=2){
+      if (L.size() != 2)
+      {
         polygons.push_back(L);
       }
       if (L.size() != 2)
@@ -239,10 +240,10 @@ int main()
     else if (L[0] != L[L.size() - 1])
     {
       P.push_back(L[1]);
-      if(L.size()!=2){
+      if (L.size() != 2)
+      {
         polygons.push_back(L);
       }
-      
     }
 
     for (auto i : L)
@@ -263,44 +264,25 @@ int main()
   // We have correct LLE at this point
   polygons[polygons.size() - 1].pop_back();
 
-
-
-
-  // for(auto i:polygons){
-  //   for(auto j:i){
-  //     cout<<"{"<<j[0]<<","<<j[1]<<"}"<<"  ";
-  //   }
-  //   cout<<endl;
-  // }
-
-
-
-
-
-
-
-
   int dfjdhfj = 0;
-  
 
-  for (int k = 0; k < LLE.size(); k++) //1
-  { // This is looping for all vertex in all diagonal list.
+  for (int k = 0; k < LLE.size(); k++) // 1
+  {                                    // This is looping for all vertex in all diagonal list.
 
-
-      for(auto i:polygons){
-        for(auto j:i){
-          cout<<"{"<<j[0]<<","<<j[1]<<"}"<<"  ";
-        }
-        cout<<endl;
-      }
-
-
-
-    int polygon1, polygon2,a_in_2,b_in_1;
+    // for (auto i : polygons)
+    // {
+    //   for (auto j : i)
+    //   {
+    //     cout << "{" << j[0] << "," << j[1] << "}"
+    //          << "  ";
+    //   }
+    //   cout << endl;
+    // }
+    int polygon1, polygon2, a_in_2, b_in_1;
     vector<vector<double>> aleft1, aright1, aleft2, aright2;
-    vector<vector<double> > merged_poly;
-    for (int i = 0; i < polygons.size(); i++)//2
-    { // This will find a particular edge (i.e 2 vertices ) in the two polygons
+    vector<vector<double>> merged_poly;
+    for (int i = 0; i < polygons.size(); i++) // 2
+    {                                         // This will find a particular edge (i.e 2 vertices ) in the two polygons
       for (int j = 0; j < polygons[i].size(); j++)
       { // this will look for second vertex in a particular polygon
         if (LLE[k][0] == polygons[i][j][0] && LLE[k][1] == polygons[i][j][1])
@@ -309,89 +291,83 @@ int main()
           {
             // this check for second vertex of the diagonal
             dfjdhfj++;
-            aleft1.push_back({polygons[i][(j - 1+polygons[i].size()) % polygons[i].size()][0],
-                              polygons[i][(j - 1+polygons[i].size()) % polygons[i].size()][1]});
+            aleft1.push_back({polygons[i][(j - 1 + polygons[i].size()) % polygons[i].size()][0],
+                              polygons[i][(j - 1 + polygons[i].size()) % polygons[i].size()][1]});
             aright1.push_back({polygons[i][(j + 2) % polygons[i].size()][0],
                                polygons[i][(j + 2) % polygons[i].size()][1]});
             polygon1 = i;
-            b_in_1 = (j+1)%polygons[i].size();
-            //break;
+            b_in_1 = (j + 1) % polygons[i].size();
+            // break;
           }
         }
-
+        // We cheked for first A then B now we chek for first b then A
         if (LLE[k][2] == polygons[i][j][0] && LLE[k][3] == polygons[i][j][1])
         { // this if checks, if a vertexx in a diagonal is there in this iteration of polygon
           if (LLE[k][0] == polygons[i][(j + 1) % polygons[i].size()][0] && LLE[k][1] == polygons[i][(j + 1) % polygons[i].size()][1])
           {
             // this check for second vertex of the diagonal
             dfjdhfj++;
-            aleft2.push_back({polygons[i][(j - 1+polygons[i].size()) % polygons[i].size()][0],
-                              polygons[i][(j - 1+polygons[i].size()) % polygons[i].size()][1]});
+            aleft2.push_back({polygons[i][(j - 1 + polygons[i].size()) % polygons[i].size()][0],
+                              polygons[i][(j - 1 + polygons[i].size()) % polygons[i].size()][1]});
             aright2.push_back({polygons[i][(j + 2) % polygons[i].size()][0],
                                polygons[i][(j + 2) % polygons[i].size()][1]});
             polygon2 = i;
-            a_in_2 = (j+1)%polygons[i].size();
-            //break;
+            a_in_2 = (j + 1) % polygons[i].size();
+            // break;
           }
         }
       }
-      // We cheked for first A then B now we chek for first b then A
-      
     }
 
     if (dfjdhfj == 2)
     {
-      cout<<"anglecheck";
-      cout<<angle_check(aleft1[0][0], aleft1[0][1], LLE[k][0], LLE[k][1], aright2[0][0], aright2[0][1])<<endl;
-      cout<<angle_check(aleft2[0][0], aleft2[0][1], LLE[k][2], LLE[k][3], aright1[0][0], aright1[0][1])<<endl;
+      // cout<<"anglecheck";
+      // cout<<angle_check(aleft1[0][0], aleft1[0][1], LLE[k][0], LLE[k][1], aright2[0][0], aright2[0][1])<<endl;
+      // cout<<angle_check(aleft2[0][0], aleft2[0][1], LLE[k][2], LLE[k][3], aright1[0][0], aright1[0][1])<<endl;
       if (angle_check(aleft1[0][0], aleft1[0][1], LLE[k][0], LLE[k][1], aright2[0][0], aright2[0][1]) &&
           angle_check(aleft2[0][0], aleft2[0][1], LLE[k][2], LLE[k][3], aright1[0][0], aright1[0][1]))
       {
-        cout << aleft1[0][0];
-        cout << aleft1[0][1] << endl;
-        cout << LLE[k][0];
-        cout << LLE[k][1] << endl;
-        cout << aright2[0][0];
-        cout << aright2[0][1] << endl;
-        cout << endl;
-        cout << aleft2[0][0];
-        cout << aleft2[0][1] << endl;
-        cout << LLE[k][2];
-        cout << LLE[k][3] << endl;
-        cout << aright1[0][0];
-        cout << aright1[0][1] << endl;
-        cout << "mergeeeeeeee" << endl;
-        cout << polygon1 << "," << polygon2 << endl;
+        // cout << aleft1[0][0];
+        // cout << aleft1[0][1] << endl;
+        // cout << LLE[k][0];
+        // cout << LLE[k][1] << endl;
+        // cout << aright2[0][0];
+        // cout << aright2[0][1] << endl;
+        // cout << endl;
+        // cout << aleft2[0][0];
+        // cout << aleft2[0][1] << endl;
+        // cout << LLE[k][2];
+        // cout << LLE[k][3] << endl;
+        // cout << aright1[0][0];
+        // cout << aright1[0][1] << endl;
+        // cout << "mergeeeeeeee" << endl;
+        // cout << polygon1 << "," << polygon2 << endl;
 
         int counter = b_in_1;
         // cout<<"a"<<a+1 % (polygons[polygon1].size())<<"b"<<b % (polygons[polygon1].size())<<endl;
         // polygons.push_back({});
-        while (polygons[polygon1][counter%(polygons[polygon1].size())][0] != LLE[k][0] 
-          && polygons[polygon1][counter % (polygons[polygon1].size())][1] != LLE[k][1])
+        while (polygons[polygon1][counter % (polygons[polygon1].size())][0] != LLE[k][0] && polygons[polygon1][counter % (polygons[polygon1].size())][1] != LLE[k][1])
         {
-          cout<<"hi1"<<counter<<endl;
-          cout << polygons[polygon1][counter % (polygons[polygon1].size())][0] << "," << polygons[polygon1][counter % (polygons[polygon1].size())][1] << endl;
-          // polygons[polygons.size() - 1].push_back({polygons[polygon1][counter % (polygons[polygon1].size())][0],
-          //                                          polygons[polygon1][counter % (polygons[polygon1].size())][1]});
-          merged_poly.push_back({polygons[polygon1][counter % (polygons[polygon1].size())][0],polygons[polygon1][counter % (polygons[polygon1].size())][1]});
+          // cout<<"hi1"<<counter<<endl;
+          // cout << polygons[polygon1][counter % (polygons[polygon1].size())][0] << "," << polygons[polygon1][counter % (polygons[polygon1].size())][1] << endl;
+          merged_poly.push_back({polygons[polygon1][counter % (polygons[polygon1].size())][0], polygons[polygon1][counter % (polygons[polygon1].size())][1]});
           counter++;
         }
 
         counter = a_in_2;
-        while (polygons[polygon2][counter % (polygons[polygon2].size())][0] != LLE[k][2] 
-                && polygons[polygon2][counter % (polygons[polygon2].size())][1] != LLE[k][3])
-        {cout<<"hi2"<<counter<<endl;
-          cout << polygons[polygon2][counter % (polygons[polygon2].size())][0] << "," << polygons[polygon2][counter % (polygons[polygon2].size())][1] << endl;
-          // polygons[polygons.size() - 1].push_back({polygons[polygon2][counter % (polygons[polygon2].size())][0],
-          //                                          polygons[polygon2][counter % (polygons[polygon2].size())][1]});
+        while (polygons[polygon2][counter % (polygons[polygon2].size())][0] != LLE[k][2] && polygons[polygon2][counter % (polygons[polygon2].size())][1] != LLE[k][3])
+        {
+          // cout<<"hi2"<<counter<<endl;
+          // cout << polygons[polygon2][counter % (polygons[polygon2].size())][0] << "," << polygons[polygon2][counter % (polygons[polygon2].size())][1] << endl;
 
           merged_poly.push_back({polygons[polygon2][counter % (polygons[polygon2].size())][0], polygons[polygon2][counter % (polygons[polygon2].size())][1]});
           counter++;
         }
-        cout<<"superend"<<endl;
-        vector<vector<double>>copypoly;
-        for(auto i: merged_poly){
-          copypoly.push_back({i[0],i[1]});
+        // cout<<"superend"<<endl;
+        vector<vector<double>> copypoly;
+        for (auto i : merged_poly)
+        {
+          copypoly.push_back({i[0], i[1]});
         }
         polygons.push_back(copypoly);
         if (polygon1 > polygon2)
@@ -406,9 +382,9 @@ int main()
         }
       }
     }
-    for(auto o:merged_poly){
-      cout<<"mergerddpoly"<<o[0]<<","<<o[1]<<endl;
-    }
+    // for(auto o:merged_poly){
+    //   cout<<"mergerddpoly"<<o[0]<<","<<o[1]<<endl;
+    // }
     aleft1.clear();
     aleft2.clear();
     aright1.clear();
@@ -416,16 +392,16 @@ int main()
     merged_poly.clear();
     dfjdhfj = 0;
   }
-  for (auto i : LLE)
-  {
+  // for (auto i : LLE)
+  // {
 
-    cout << "{" << i[0] << "," << i[1] << "}"
-         << ","
-         << "{" << i[2] << "," << i[3] << "}" << endl;
-    // std::cout << j[0] << "," << j[1] << std::endl;
+  //   cout << "{" << i[0] << "," << i[1] << "}"
+  //        << ","
+  //        << "{" << i[2] << "," << i[3] << "}" << endl;
+  //   // std::cout << j[0] << "," << j[1] << std::endl;
 
-    // cout << "end" << endl;
-  }
+  //   // cout << "end" << endl;
+  // }
 
   for (auto i : polygons)
   {
